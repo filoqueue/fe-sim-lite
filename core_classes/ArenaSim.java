@@ -7,7 +7,27 @@
  */
 
 //imports for GUI needed once a GUI type is decided on
+import java.util.LinkedList;
+  
 public class ArenaSim{
+  
+/*-------------Inits explained below----------------*/
+  private static LinkedList<FEClass> cls;
+  private static LinkedList<Weapon> weps;
+  private static LinkedList<Unit> units;
+/*--------------------------------------------------*/
+  
+  public static void main(String [] args)
+  {
+    cls = new LinkedList<>();
+    weps = new LinkedList<>();
+    units = new LinkedList<>();
+    
+    initClasses();
+    initWeapons();
+    initUnits();
+    
+  }
   
   public int rollRN(){ // roll a random number
     
@@ -85,5 +105,35 @@ public class ArenaSim{
     return dmgDone;
     
   } // attack
+  
+  private static void initClasses() // initializes some examples of classes to be used as a demo
+  {
+    cls.add(new FEClass("Myrmidon",0,0,0,0));
+    cls.add(new FEClass("Swordmaster",0,0,15,0));
+    cls.add(new FEClass("Soldier",0,0,0,0));
+    cls.add(new FEClass("Halberdier",0,0,5,0));
+    cls.add(new FEClass("Fighter",0,0,0,0));
+    cls.add(new FEClass("Warrior",0,0,0,0));
+  }
+  
+  private static void initWeapons() // initializes some unit weapons
+  {
+    weps.add(new Weapon("Iron Sword", 'R', 'G', 'B', 5, 90, 0, 7, false));
+    weps.add(new Weapon("Steel Sword", 'R', 'G', 'B', 8, 75, 0, 12, false));
+    weps.add(new Weapon("Iron Lance", 'B', 'R', 'G', 7, 80, 0, 8, false));
+    weps.add(new Weapon("Steel Lance", 'B', 'R', 'G', 10, 70, 0, 13, false));
+    weps.add(new Weapon("Iron Axe", 'G', 'B', 'R', 8, 75, 0, 10, false));
+    weps.add(new Weapon("Steel Axe", 'G', 'B', 'R', 11, 65, 0, 15, false));
+  }
+  
+  private static void initUnits() // creates some example units to be used for arena testing
+  {
+    /* For ease of testing, all units are assumed to be the male variation */
+    
+    //units.add(new Unit(String name, Weapon weapon, FEClass _class, int health, int hp, int str, int mag, int skl, int spd, int lck, int def, int res));
+    units.add(new Unit("Myrmidon", weps.get(0), cls.get(0), 17, 17, 4, 0, 5, 5, 0, 3, 0));
+    units.add(new Unit("Soldier", weps.get(2), cls.get(2), 20, 20, 4, 0, 4, 4, 0, 4, 0));
+    units.add(new Unit("Fighter", weps.get(4), cls.get(4), 24, 24, 5, 0, 3, 3, 0, 3, 0));
+  }
   
 } // class
