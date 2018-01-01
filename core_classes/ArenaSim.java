@@ -7,35 +7,54 @@
  */
 
 //imports for GUI needed once a GUI type is decided on
-import java.util.LinkedList;
+import java.util.ArrayList;
   
 public class ArenaSim{
   
 /*-------------Inits explained below----------------*/
-  private static LinkedList<FEClass> cls;
-  private static LinkedList<Weapon> weps;
-  private static LinkedList<Unit> units;
+  private static ArrayList<FEClass> cls;
+  private static ArrayList<Weapon> weps;
+  private static ArrayList<Unit> units;
 /*--------------------------------------------------*/
   
   public static void main(String [] args)
   {
-    cls = new LinkedList<>();
-    weps = new LinkedList<>();
-    units = new LinkedList<>();
-    
+    cls = new ArrayList<>();
+    weps = new ArrayList<>();
+    units = new ArrayList<>();
     initClasses();
     initWeapons();
     initUnits();
     
+    
+    Unit left = units.get(1);
+    Unit right = units.get(1);
+    printUnit(left);
+    printUnit(right);
+    
+    System.out.println("Begin Combat");
+    System.out.println("------------------------------------");
+    while(!left.isDead() && !right.isDead())
+    {
+      System.out.printf("%s %d   %s %d\n",left.getName(),left.getHP(),right.getName(),right.getHP());
+      int[] damage = combat(left,right);
+      //System.out.printf("%d   %d\n",damage[0],damage[1]); //prints damage output for debugging
+      left.setHP(left.getHP() - damage[1]);
+      right.setHP(right.getHP() - damage[0]);
+      if(left.getHP() < 0) {left.setHP(0);}
+      if(right.getHP() < 0) {right.setHP(0);}
+      
+    }
+    System.out.printf("%s %d   %s %d\n",left.getName(),left.getHP(),right.getName(),right.getHP());
   }
   
-  public int rollRN(){ // roll a random number
+  public static int rollRN(){ // roll a random number
     
     return (int)(Math.random() * 100) + 1;
     
   }
   
-  public boolean succeeds(int goal){ // if a hit or crit succeeds
+  public static boolean succeeds(int goal){ // if a hit or crit succeeds
     
     int attempt = rollRN(); // if this line is my only call to rollRN(), I'll delete rollRN() and replace this call with the code in rollRN()
     if(attempt < goal)
@@ -45,20 +64,20 @@ public class ArenaSim{
     
   }
   
-  public int[] combat(Unit attacker, Unit defender){
+  public static int[] combat(Unit attacker, Unit defender){
     
     int[] dmgSuffered = {0, 0}; 
-   /* dmgSuffered[0] is how much to subtract from the attackers hp. Ditto dmgSuffered[1] for the defender
-    * whenever combat is called, immediately after should be code that subtracts dmgSuffered[0] from the
-    * attacker's health and ditto for dmgSuffered[1] and the defender and if either are negative, set to 0;
-    */ 
+    /* dmgSuffered[0] is how much to subtract from the attackers hp. Ditto dmgSuffered[1] for the defender
+     * whenever combat is called, immediately after should be code that subtracts dmgSuffered[0] from the
+     * attacker's health and ditto for dmgSuffered[1] and the defender and if either are negative, set to 0;
+     */ 
     if(attacker.getWeapon().advantage(defender.getWeapon())){ // if the attacker's weapon beats the defender's
       
       dmgSuffered[0] += attack(attacker, defender, 15, 1);
       dmgSuffered[1] += attack(defender, attacker, -15, -1);
       if((attacker.getAS() - defender.getAS()) >= 4) // if the attacker doubles the defender
         dmgSuffered[0] += attack(attacker, defender, 15, 0);
-      else if((attacker.getAS() - defender.getAS()) < 4) // if the defender doubles the attacker
+      else if((attacker.getAS() - defender.getAS()) <= -4) // if the defender doubles the attacker
         dmgSuffered[1] += attack(defender, attacker, -15, -1);
       
     }
@@ -68,25 +87,30 @@ public class ArenaSim{
       dmgSuffered[1] += attack(defender, attacker, 15, 1);
       if((attacker.getAS() - defender.getAS()) >= 4)
         dmgSuffered[0] += attack(attacker, defender, -15, -1);
-      else if((attacker.getAS() - defender.getAS()) > 4)
+      else if((attacker.getAS() - defender.getAS()) <= -4)
         dmgSuffered[1] += attack(defender, attacker, 15, 1);
       
     }
     else{ // neither weapon beats the other
-      
-      dmgSuffered[0] += attack(attacker, defender, 0, 0);
-      dmgSuffered[1] += attack(defender, attacker, 0, 0);
-      if((attacker.getAS() - defender.getAS()) >= 4)
-        dmgSuffered[0] += attack(attacker, defender, 0, 0);
-      else if((attacker.getAS() - defender.getAS()) > 4)
-        dmgSuffered[1] += attack(defender, attacker, 0, 0);
+      dmgSuffered[0] += attack(attacker, defender, 0, 0);    //initial attack
+      System.out.println(dmgSuffered[0]);
+      dmgSuffered[1] += attack(defender, attacker, 0, 0);    //initial counterattack
+      System.out.println(dmgSuffered[1]);
+      if((attacker.getAS() - defender.getAS()) >= 4)         //if the attacker doubles
+      {         
+        dmgSuffered[0] += attack(attacker, defender, 0, 0);   //second attack from attacker
+      }
+      else if((attacker.getAS() - defender.getAS()) <= -4)   //if the defender doubles
+      {   
+        dmgSuffered[1] += attack(defender, attacker, 0, 0);   //second attack from the defender
+      }    
       
     }
     return dmgSuffered;
     
   } // combat
   
-  private int attack(Unit attacker, Unit defender, int dmgMod, int hitMod){
+  private static int attack(Unit attacker, Unit defender, int hitMod, int dmgMod){
     
     int dmgDone = 0;
     int attackerHit = attacker.getHit() + hitMod;
@@ -118,12 +142,12 @@ public class ArenaSim{
   
   private static void initWeapons() // initializes some unit weapons
   {
-    weps.add(new Weapon("Iron Sword", 'R', 'G', 'B', 5, 90, 0, 7, false));
+    weps.add(new Weapon("Iron Sword",  'R', 'G', 'B', 5, 90, 0, 7, false));
     weps.add(new Weapon("Steel Sword", 'R', 'G', 'B', 8, 75, 0, 12, false));
-    weps.add(new Weapon("Iron Lance", 'B', 'R', 'G', 7, 80, 0, 8, false));
+    weps.add(new Weapon("Iron Lance",  'B', 'R', 'G', 7, 80, 0, 8, false));
     weps.add(new Weapon("Steel Lance", 'B', 'R', 'G', 10, 70, 0, 13, false));
-    weps.add(new Weapon("Iron Axe", 'G', 'B', 'R', 8, 75, 0, 10, false));
-    weps.add(new Weapon("Steel Axe", 'G', 'B', 'R', 11, 65, 0, 15, false));
+    weps.add(new Weapon("Iron Axe",    'G', 'B', 'R', 8, 75, 0, 10, false));
+    weps.add(new Weapon("Steel Axe",   'G', 'B', 'R', 11, 65, 0, 15, false));
   }
   
   private static void initUnits() // creates some example units to be used for arena testing
@@ -134,6 +158,24 @@ public class ArenaSim{
     units.add(new Unit("Myrmidon", weps.get(0), cls.get(0), 17, 17, 4, 0, 5, 5, 0, 3, 0));
     units.add(new Unit("Soldier", weps.get(2), cls.get(2), 20, 20, 4, 0, 4, 4, 0, 4, 0));
     units.add(new Unit("Fighter", weps.get(4), cls.get(4), 24, 24, 5, 0, 3, 3, 0, 3, 0));
+  }
+  
+  private static void printUnit(Unit x)
+  {
+    Weapon wep = x.getWeapon();
+    System.out.println("=============================");
+    System.out.println(x.getFEClass().name);
+    System.out.println("-----------------------------");
+    System.out.println(x.getName());
+    System.out.println("HP " + x.getHP() + "  Sp " + x.getSpd());
+    System.out.println("Str " + x.getStr() + "  Lck " + x.getLck());
+    System.out.println("Mag " + x.getMag() + "  Def " + x.getDef());
+    System.out.println("Skl " + x.getSkl() + "  Res " + x.getRes());
+    System.out.println("-----------------------------");
+    System.out.printf("%s (%c)\n", wep.getName(),wep.getType());
+    System.out.printf("Atk %d  Hit %d  Avo %d\n", x.getAtk(),x.getHit(),x.getAvo());
+    System.out.printf("Crit %d  Ddg %d\n", x.getCrit(),x.getDdg());
+    System.out.println("=============================");
   }
   
 } // class

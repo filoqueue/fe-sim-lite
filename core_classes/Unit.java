@@ -4,20 +4,20 @@ public class Unit{
   private FEClass _class;
   private Weapon weapon;
   private int health; // maximum # of hit points
-  private int hp; // current # of hit points
-  private int str; // Strength: for calculating physical attack power
-  private int mag; // Magic: for calculating magical attack power
-  private int skl; // Skill: for calculating accuracy and critical rate
-  private int spd; // Speed: for calculating avoidance and determining who(if anyone) attacks twice
-  private int lck; // Luck: for calculating critical avoidance and a few other things
-  private int def; // Defense: mitigates incoming physical damage
-  private int res; // Resistance: mitigates incoming magical damage
-  private int atk; // Attack: The damage a unit will deal
-  private int as; // Attack Speed: Speed after weapon weight penalties (if any)
-  private int hit; // Hit: How accurate this unit's attacks will be
-  private int crit; // Critical Rate: The probability of doing triple damage
-  private int avo; // Avoidance: The probability of evading an attack
-  private int ddg; // dodge AKA critical evasion: mitigates the enemy's critical rate
+  private int hp;     // current # of hit points
+  private int str;    // Strength: for calculating physical attack power
+  private int mag;    // Magic: for calculating magical attack power
+  private int skl;    // Skill: for calculating accuracy and critical rate
+  private int spd;    // Speed: for calculating avoidance and determining who(if anyone) attacks twice
+  private int lck;    // Luck: for calculating critical avoidance and a few other things
+  private int def;    // Defense: mitigates incoming physical damage
+  private int res;    // Resistance: mitigates incoming magical damage
+  private int atk;    // Attack: The damage a unit will deal
+  private int as;     // Attack Speed: Speed after weapon weight penalties (if any)
+  private int hit;    // Hit: How accurate this unit's attacks will be
+  private int crit;   // Critical Rate: The probability of doing triple damage
+  private int avo;    // Avoidance: The probability of evading an attack
+  private int ddg;    // dodge AKA critical evasion: mitigates the enemy's critical rate
   
   public Unit(){
     
@@ -90,7 +90,7 @@ public class Unit{
   public int getCrit(){return this.crit;}
   public int getDdg(){return this.ddg;}
   
-  public void setHP(int hp){this.hp = hp;}  // more like public Boyd setHP amirite?? make sure to call this mutator right after combat  
+  public void setHP(int hp){this.hp = hp;}  // more like public Boyd setHP amirite?? (unappreciated by collaborators FYI) make sure to call this mutator right after combat  
 //*********************************************************************************************************************
   public String toString(){ // this will be the default toString. another one can be made for a more comprehensive view
     
@@ -99,6 +99,9 @@ public class Unit{
     
   } // toString
   
-  
+  public boolean isDead()
+  {
+    return (this.hp <= 0)? true : false;
+  }
   
 } // class
