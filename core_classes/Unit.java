@@ -70,6 +70,34 @@ public class Unit{
     ddg = lck + _class.getDdg();    
     
   } // 11C
+  
+  public Unit(Unit x){
+    
+    this.name = x.getName();
+    this._class = x.getFEClass();
+    this.weapon = x.getWeapon();
+    this.health = x.getHealth();
+    this.hp = x.getHP();
+    this.str = x.getStr();
+    this.mag = x.getMag();
+    this.skl = x.getSkl();
+    this.spd = x.getSpd();
+    this.lck = x.getLck();
+    this.def = x.getDef();
+    this.res = x.getRes();
+    atk = x.getStr() + x.getWeapon().getMt();
+    if((x.getStr() - weapon.getWt()) <=0) 
+      as = x.getSpd();
+    else
+      as = x.getSpd() - (x.getStr() - weapon.getWt());
+    hit = (x.getSkl() * 2) + x.getLck() + x.getWeapon().getHit() + x.getFEClass().getHit();
+    avo = (as * 2) + x.getLck() + x.getFEClass().getAvo();
+    crit = (x.getSkl() / 2) + x.getWeapon().getCrit() + x.getFEClass().getCrit();
+    ddg = x.getLck() + x.getFEClass().getDdg();    
+    
+  }
+  
+  
 //*********************************************************************************************************************
   public String getName(){return this.name;}
   public FEClass getFEClass(){return this._class;}

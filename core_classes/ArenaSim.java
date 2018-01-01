@@ -26,9 +26,8 @@ public class ArenaSim{
     initWeapons();
     initUnits();
     
-    
-    Unit left = units.get(1);
-    Unit right = units.get(1);
+    Unit left = new Unit(units.get(1));
+    Unit right = new Unit(units.get(1));
     printUnit(left);
     printUnit(right);
     
@@ -41,6 +40,7 @@ public class ArenaSim{
       //System.out.printf("%d   %d\n",damage[0],damage[1]); //prints damage output for debugging
       left.setHP(left.getHP() - damage[1]);
       right.setHP(right.getHP() - damage[0]);
+      
       if(left.getHP() < 0) {left.setHP(0);}
       if(right.getHP() < 0) {right.setHP(0);}
       
@@ -57,7 +57,7 @@ public class ArenaSim{
   public static boolean succeeds(int goal){ // if a hit or crit succeeds
     
     int attempt = rollRN(); // if this line is my only call to rollRN(), I'll delete rollRN() and replace this call with the code in rollRN()
-    if(attempt < goal)
+    if(attempt > goal)
       return false;
     else
       return true;
