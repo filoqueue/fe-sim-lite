@@ -19,15 +19,15 @@ public class ArenaSim{
   
   public static void main(String [] args)
   {
-    cls = new ArrayList<>();
-    weps = new ArrayList<>();
-    units = new ArrayList<>();
+    cls = new ArrayList<FEClass>();
+    weps = new ArrayList<Weapon>();
+    units = new ArrayList<Unit>();
     initClasses();
     initWeapons();
     initUnits();
     
-    Unit left = new Unit(units.get(1));
-    Unit right = new Unit(units.get(1));
+    Unit left = new Unit(units.get(0));
+    Unit right = new Unit(units.get(2));
     printUnit(left);
     printUnit(right);
     
@@ -41,8 +41,8 @@ public class ArenaSim{
       left.setHP(left.getHP() - damage[1]);
       right.setHP(right.getHP() - damage[0]);
       
-      if(left.getHP() < 0) {left.setHP(0);}
-      if(right.getHP() < 0) {right.setHP(0);}
+      if(left.getHP() < 0) {left.setHP(0);System.out.println(left.getName() + " is defeated.");}
+      if(right.getHP() < 0) {right.setHP(0);System.out.println(right.getName() + " is defeated.");}
       
     }
     System.out.printf("%s %d   %s %d\n",left.getName(),left.getHP(),right.getName(),right.getHP());
@@ -112,32 +112,46 @@ public class ArenaSim{
   
   private static int attack(Unit attacker, Unit defender, int hitMod, int dmgMod){
     
+    System.out.println(attacker.getName() + "attacks " + defender.getName() + ".");
     int dmgDone = 0;
     int attackerHit = attacker.getHit() + hitMod;
     boolean hitHappens = succeeds(attackerHit - defender.getAvo());
     boolean critHappens = succeeds(attacker.getCrit() - defender.getDdg());
     if(hitHappens){
       
-      if(!attacker.getWeapon().getIsMagic())
+      if(!attacker.getWeapon().getIsMagic()){
+        
         dmgDone = (attacker.getAtk() - defender.getDef()) + dmgMod;
-      else
+        
+      }
+      else{
+        
         dmgDone = (attacker.getAtk() - defender.getRes()) + dmgMod;
-      if(critHappens)
+        
+      }
+      if(critHappens){
+        
         dmgDone *= 3;
+        System.out.println("Critical Hit!");
+        
+      }
+      System.out.println(attacker.getName() + " dealt " + dmgDone + " damage.");
       
     } // if
+    
     return dmgDone;
     
   } // attack
   
   private static void initClasses() // initializes some examples of classes to be used as a demo
   {
-    cls.add(new FEClass("Myrmidon",0,0,0,0));
-    cls.add(new FEClass("Swordmaster",0,0,15,0));
-    cls.add(new FEClass("Soldier",0,0,0,0));
-    cls.add(new FEClass("Halberdier",0,0,5,0));
-    cls.add(new FEClass("Fighter",0,0,0,0));
-    cls.add(new FEClass("Warrior",0,0,0,0));
+    cls.add(new FEClass("Myrmidon",0,0,5,0));
+    cls.add(new FEClass("Swordmaster",0,10,15,0));
+    cls.add(new FEClass("Soldier")); // there's a constructor that takes just a string and sets hit, avo, crit, and ddg to 0
+    cls.add(new FEClass("Halberdier",0,0,5,10)); // also used for Spear Masters
+    cls.add(new FEClass("Fighter"));
+    cls.add(new FEClass("Warrior"));
+    cls.add(new FEClass("Berserker",0,0,20,-5));
   }
   
   private static void initWeapons() // initializes some unit weapons
@@ -148,6 +162,7 @@ public class ArenaSim{
     weps.add(new Weapon("Steel Lance", 'B', 'R', 'G', 10, 70, 0, 13, false));
     weps.add(new Weapon("Iron Axe",    'G', 'B', 'R', 8, 75, 0, 10, false));
     weps.add(new Weapon("Steel Axe",   'G', 'B', 'R', 11, 65, 0, 15, false));
+    weps.add(new Weapon("Killing Edge", 'R', 'G', 'B', 9, 75,30, 9, false));
   }
   
   private static void initUnits() // creates some example units to be used for arena testing
