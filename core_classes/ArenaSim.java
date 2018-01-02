@@ -74,37 +74,39 @@ public class ArenaSim{
     if(attacker.getWeapon().advantage(defender.getWeapon())){ // if the attacker's weapon beats the defender's
       
       dmgSuffered[0] += attack(attacker, defender, 15, 1);
-      dmgSuffered[1] += attack(defender, attacker, -15, -1);
-      if((attacker.getAS() - defender.getAS()) >= 4) // if the attacker doubles the defender
-        dmgSuffered[0] += attack(attacker, defender, 15, 0);
-      else if((attacker.getAS() - defender.getAS()) <= -4) // if the defender doubles the attacker
+      if((defender.getHP() - dmgSuffered[0]) >= 0) //if the defender has HP remaining
+      {
         dmgSuffered[1] += attack(defender, attacker, -15, -1);
+        if((attacker.getAS() - defender.getAS()) >= 4) // if the attacker doubles the defender
+          dmgSuffered[0] += attack(attacker, defender, 15, 0);
+        else if((attacker.getAS() - defender.getAS()) <= -4) // if the defender doubles the attacker
+          dmgSuffered[1] += attack(defender, attacker, -15, -1);
+      }
       
     }
     else if(attacker.getWeapon().disadvantage(defender.getWeapon())){ // if the defender's weapon beats the attacker's
       
       dmgSuffered[0] += attack(attacker, defender, -15, -1);
-      dmgSuffered[1] += attack(defender, attacker, 15, 1);
-      if((attacker.getAS() - defender.getAS()) >= 4)
-        dmgSuffered[0] += attack(attacker, defender, -15, -1);
-      else if((attacker.getAS() - defender.getAS()) <= -4)
+      if((defender.getHP() - dmgSuffered[0]) >= 0) //if the defender has HP remaining
+      {
         dmgSuffered[1] += attack(defender, attacker, 15, 1);
-      
+        if((attacker.getAS() - defender.getAS()) >= 4)
+          dmgSuffered[0] += attack(attacker, defender, -15, -1);
+        else if((attacker.getAS() - defender.getAS()) <= -4)
+          dmgSuffered[1] += attack(defender, attacker, 15, 1);
+      }
     }
     else{ // neither weapon beats the other
-      dmgSuffered[0] += attack(attacker, defender, 0, 0);    //initial attack
-      System.out.println(dmgSuffered[0]);
-      dmgSuffered[1] += attack(defender, attacker, 0, 0);    //initial counterattack
-      System.out.println(dmgSuffered[1]);
-      if((attacker.getAS() - defender.getAS()) >= 4)         //if the attacker doubles
-      {         
-        dmgSuffered[0] += attack(attacker, defender, 0, 0);   //second attack from attacker
-      }
-      else if((attacker.getAS() - defender.getAS()) <= -4)   //if the defender doubles
-      {   
-        dmgSuffered[1] += attack(defender, attacker, 0, 0);   //second attack from the defender
-      }    
       
+      dmgSuffered[0] += attack(attacker, defender, 0, 0);    //initial attack
+      if((defender.getHP() - dmgSuffered[0]) >= 0) //if the defender has HP remaining
+      {
+        dmgSuffered[1] += attack(defender, attacker, 0, 0);    //initial counterattack
+        if((attacker.getAS() - defender.getAS()) >= 4)         //if the attacker doubles       
+          dmgSuffered[0] += attack(attacker, defender, 0, 0);   //second attack from attacker
+        else if((attacker.getAS() - defender.getAS()) <= -4)   //if the defender doubles  
+          dmgSuffered[1] += attack(defender, attacker, 0, 0);   //second attack from the defender 
+      }
     }
     return dmgSuffered;
     
@@ -112,7 +114,7 @@ public class ArenaSim{
   
   private static int attack(Unit attacker, Unit defender, int hitMod, int dmgMod){
     
-    System.out.println(attacker.getName() + "attacks " + defender.getName() + ".");
+    System.out.println(attacker.getName() + " attacks " + defender.getName() + ".");
     int dmgDone = 0;
     int attackerHit = attacker.getHit() + hitMod;
     boolean hitHappens = succeeds(attackerHit - defender.getAvo());
